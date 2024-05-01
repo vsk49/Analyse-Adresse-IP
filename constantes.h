@@ -22,11 +22,11 @@
 
 #ifndef _CONSTANTES
 
-#define _CONSTANTES
-#define MAX_LENGTH 200
-#define NB_BYTES 4
-#define NB_BITS 8
+    #define _CONSTANTES
+    #define LONGUEUR_MAX 200
+    #define NB_BYTES 4
+    #define NB_BITS 8
 
-typedef enum {OK, INVALID_ADDRESS, INVALID_BYTE} Exception;
+    typedef enum {OK, ADRESSE_INVALIDE, BYTE_INVALIDE} Exception;
 
 #endif
