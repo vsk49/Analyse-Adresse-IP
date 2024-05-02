@@ -29,4 +29,6 @@
 
     typedef enum {OK, ADRESSE_INVALIDE, BYTE_INVALIDE} Exception;
 
+    typedef enum {false, true} boolean;
+
 #endif
