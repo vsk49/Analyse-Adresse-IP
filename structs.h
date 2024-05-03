@@ -37,7 +37,7 @@
 
     typedef struct AdressesAAfficher {
         char adresseClasse;
-        char adresseType[LONGUEUR_MAX];
+        char* adresseType[LONGUEUR_MAX];
         int adresseReseau[NB_BYTES];
         int adresseMachineHote[NB_BYTES];
     };
