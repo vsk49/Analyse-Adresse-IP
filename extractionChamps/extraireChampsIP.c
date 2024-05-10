@@ -110,6 +110,8 @@ AdressesAAfficher extraireChampsIP(char* adresseIP) {
         } else {
             strcpy(information.adresseType, "Public");
         }
+    
+        return information;
     }
 
 }
