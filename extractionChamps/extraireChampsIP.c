@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "verificationFormat.h"
+#include "./../verificationFormat/verificationFormat.h"
 #include "./../constantes.h"
 #include "./../structs.h"
 

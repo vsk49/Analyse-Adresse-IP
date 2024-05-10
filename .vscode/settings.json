@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "microbit": "",
-        "verificationformat.h": "c"
+        "verificationformat.h": "c",
+        "structs.h": "c"
     }
 }
