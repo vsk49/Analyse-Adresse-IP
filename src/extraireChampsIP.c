@@ -23,9 +23,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "./../verificationFormat/verificationFormat.h"
-#include "./../constantes.h"
-#include "./../structs.h"
+#include "./../obj/verificationFormat.h"
+#include "./../obj/constantes.h"
+#include "./../obj/structs.h"
 
 AdressesAAfficher extraireChampsIP(char* adresseIP) {
     if (!estAdresseIPValide(adresseIP)) {

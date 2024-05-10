@@ -23,9 +23,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "verificationFormat.h"
-#include "./../constantes.h"
-#include "./../structs.h"
+#include "./../obj/verificationFormat.h"
+#include "./../obj/constantes.h"
+#include "./../obj/structs.h"
 
 boolean estAdresseIPValide(char* adresseIP) {
     // Pour eviter la possibilite de modifier l'adresse originale

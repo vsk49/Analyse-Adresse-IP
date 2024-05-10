@@ -23,8 +23,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "./../verificationFormat/verificationFormat.h"
-#include "./../constantes.h"
-#include "./../structs.h"
+#include "verificationFormat.h"
+#include "constantes.h"
+#include "structs.h"
 
 AdressesAAfficher extraireChampsIP(char* adresseIP);

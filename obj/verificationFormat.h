@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "./../constantes.h"
-#include "./../structs.h"
+#include "constantes.h"
+#include "structs.h"
 
 boolean estAdresseIPValide(char* adresseIP);

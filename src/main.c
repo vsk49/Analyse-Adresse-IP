@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "constantes.h"
-#include "structs.h"
-#include "verificationFormat/verificationFormat.h"
-#include "extractionChamps/extraireChampsIP.h"
-#include "affichageChamps/afficherChamps.h"
+#include "./../obj/constantes.h"
+#include "./../obj/structs.h"
+#include "./../obj/verificationFormat.h"
+#include "./../obj/extraireChampsIP.h"
+#include "./../obj/afficherChamps.h"
 
 int main(void) {
     char adresseIP[LONGUEUR_MAX];

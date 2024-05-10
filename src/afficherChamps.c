@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "./../constantes.h"
-#include "./../structs.h"
-#include "./../verificationFormat/verificationFormat.h"
-#include "./../extractionChamps/extraireChampsIP.h"
+#include "./../obj/constantes.h"
+#include "./../obj/structs.h"
+#include "./../obj/verificationFormat.h"
+#include "./../obj/extraireChampsIP.h"
 
 void afficherChampsIP(char* adresseIP) {
     if (estAdresseIPValide(adresseIP) == false) {
