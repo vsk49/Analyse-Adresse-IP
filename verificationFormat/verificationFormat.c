@@ -28,40 +28,57 @@
 #include "./../structs.h"
 
 boolean estAdresseIPValide(char* adresseIP) {
-    char adresseCopy[LONGUEUR_MAX]; // Buffer to store a copy of the input address
-    strcpy(adresseCopy, adresseIP); // Copy the input to a local buffer
+    // Pour eviter la possibilite de modifier l'adresse originale
+    char adresseCopy[LONGUEUR_MAX]; 
+    strcpy(adresseCopy, adresseIP);
 
-    // Split the IP address and subnet mask
-    char *adresseIP = strtok(adresseCopy, "/");
+    // Separer l'adresse IP et le masque de sous-reseau
+    char *adresseIPToken = strtok(adresseCopy, "/");
     char *subnetMaskStr = strtok(NULL, "/");
 
-    // Check if either is NULL which means invalid format
-    if (!adresseIP || !subnetMaskStr) {
+    // Si le masque de sous-reseau n'est pas present, retournez faux
+    if (!adresseIPToken || !subnetMaskStr) {
         return false;
     }
 
-    // Validate subnet mask
-    int subnetMask = atoi(subnetMaskStr);
-    if (subnetMask < 0 || subnetMask > 32) {
+    // Valider le masque de sous-reseau
+    int subnetMask = sscanf(subnetMaskStr, "%d", &subnetMask);
+    if (subnetMask != 1 || subnetMask < 0 || subnetMask > 32) {
         return false;
     }
 
-    // Validate IP address
-    char *token = strtok(adresseIP, ".");
+    // Valider l'adresse IP
+    char *token = strtok(adresseIPToken, ".");
     int segments = 0;
     while (token != NULL) {
-        int num = atoi(token);
-        if (num < 0 || num > 255) {
-            return 0;
+        int octet;
+        if (sscanf(token, "%d", &octet) != 1 || octet < 0 || octet > 255) {
+            return false;
         }
         segments++;
         token = strtok(NULL, ".");
     }
 
-    // There must be exactly 4 segments in a valid IP address
+    // L'adresse IP doit avoir 4 segments
     if (segments != 4) {
         return false;
     }
 
     return true;
 }
+
+/*
+int main(void) {
+    char adresseIP[LONGUEUR_MAX];
+    printf("Entrez une adresse IP: ");
+    scanf("%s", adresseIP);
+
+    if (estAdresseIPValide(adresseIP)) {
+        printf("L'adresse IP est valide.\n");
+    } else {
+        printf("L'adresse IP n'est pas valide.\n");
+    }
+
+    return 0;
+}
+*/
