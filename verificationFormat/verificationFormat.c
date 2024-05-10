@@ -51,8 +51,8 @@ boolean estAdresseIPValide(char* adresseIP) {
     char *token = strtok(adresseIPToken, ".");
     int segments = 0;
     while (token != NULL) {
-        int octet;
-        if (sscanf(token, "%d", &octet) != 1 || octet < 0 || octet > 255) {
+        int octet = sscanf(token, "%d", &octet);
+        if (octet != 1 || octet < 0 || octet > 255) {
             return false;
         }
         segments++;

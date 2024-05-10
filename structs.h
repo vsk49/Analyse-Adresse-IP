@@ -24,20 +24,10 @@
 
     #define _STRUCTS
     #include "constantes.h"
-
     typedef struct {
-        char* octets[NB_BYTES];
-        char* mask;
-    } AdresseChaine;
-    
-    typedef struct {
-        int octets[NB_BYTES];
-        int mask;
-    } AdresseDecimale;
-
-    typedef struct {
+        int masqueSousReseau;
         char adresseClasse;
-        char* adresseType[LONGUEUR_MAX];
+        char adresseType[LONGUEUR_MAX];
         int adresseReseau[NB_BYTES];
         int adresseMachineHote[NB_BYTES];
     } AdressesAAfficher;

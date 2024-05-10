@@ -27,4 +27,4 @@
 #include "./../constantes.h"
 #include "./../structs.h"
 
-void extraireChampsIP(char* adresseIP);
+AdressesAAfficher extraireChampsIP(char* adresseIP);
