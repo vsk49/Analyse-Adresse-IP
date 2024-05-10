@@ -27,8 +27,6 @@
     #define NB_BYTES 4
     #define NB_BITS 8
 
-    typedef enum {OK, ADRESSE_INVALIDE, BYTE_INVALIDE} Exception;
-
     typedef enum {false, true} boolean;
 
 #endif
