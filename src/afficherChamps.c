@@ -35,7 +35,7 @@ void afficherChampsIP(char* adresseIP) {
         AdressesAAfficher champs = extraireChampsIP(adresseIP);
         printf("Adresse IP : %s\n", adresseIP);
         printf("Masque de sous-réseau : %d\n", champs.masqueSousReseau);
-        printf("Classe: %s\n", champs.adresseClasse);
+        printf("Classe: %d\n", champs.adresseClasse);
         printf("Type: %s\n", champs.adresseType);
         printf("Adresse réseau: %d.%d.%d.%d\n", champs.adresseReseau[0], champs.adresseReseau[1], 
             champs.adresseReseau[2], champs.adresseReseau[3]);

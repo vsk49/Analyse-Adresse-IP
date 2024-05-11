@@ -1,16 +1,14 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 TARGET = main
-OBJ = obj/main.o obj/afficherChamps.o
+SRCS = src/main.c src/afficherChamps.c src/verificationFormat.c src/extraireChampsIP.c
+OBJS = $(SRCS:src/%.c=obj/%.o)
 
-$(TARGET): $(OBJ)
-    $(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-obj/main.o: main.c
-    $(CC) $(CFLAGS) -c -o $@ $<
-
-obj/afficherChamps.o: obj/afficherChamps.c
-    $(CC) $(CFLAGS) -c -o $@ $<
+obj/%.o: src/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-    rm -f $(TARGET) $(OBJ)
+	rm -f $(TARGET) $(OBJS)
