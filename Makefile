@@ -1,24 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 TARGET = main
-SRCS = main.c verificationFormat/verificationFormat.c extractionChamps/extraireChampsIP.c affichageChamps/afficherChamps.c
-OBJS = $(SRCS:.c=.o)
+OBJ = obj/main.o obj/afficherChamps.o
 
-all: $(TARGET)
-    $(CC) -o $(TARGET) $(OBJS) $(TARGET)
+$(TARGET): $(OBJ)
+    $(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
 
-$(TARGET): $(OBJS)
-    $(CC) -o $(SRCS)
+obj/main.o: main.c
+    $(CC) $(CFLAGS) -c -o $@ $<
 
-affichageChamps/afficherChamps.c : affichageChamps/afficherChamps.h extractionChamps/extraireChampsIP.h 
-    verificationFormat/verificationFormat.h
-    $(CC) -c affichageChamps/afficherChamps.c
-
-extractionChamps/extraireChampsIP.c : extractionChamps/extraireChampsIP.h verificationFormat/verificationFormat.h
-    $(CC) -c extractionChamps/extraireChampsIP.c
-
-verificationFormat/verificationFormat.c : verificationFormat/verificationFormat.h
-    $(CC) -c verificationFormat/verificationFormat.c
+obj/afficherChamps.o: obj/afficherChamps.c
+    $(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-    rm -f $(OBJS) $(TARGET)
+    rm -f $(TARGET) $(OBJ)
