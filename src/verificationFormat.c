@@ -42,21 +42,23 @@ boolean estAdresseIPValide(char* adresseIP) {
     }
 
     // Valider le masque de sous-reseau
-    int subnetMask = sscanf(subnetMaskStr, "%d", &subnetMask);
-    if (subnetMask != 1 || subnetMask < 0 || subnetMask > 32) {
+    int subnetMask;
+    int result = sscanf(subnetMaskStr, "%d", &subnetMask);
+    if (result != 1 || subnetMask < 0 || subnetMask > 32) {
         return false;
     }
 
     // Valider l'adresse IP
-    char *token = strtok(adresseIPToken, ".");
+    char *ipToken = strtok(adresseIPToken, ".");
     int segments = 0;
-    while (token != NULL) {
-        int octet = sscanf(token, "%d", &octet);
-        if (octet != 1 || octet < 0 || octet > 255) {
+    while (ipToken != NULL) {
+        int octet;
+        result = sscanf(ipToken, "%d", &octet);
+        if (result != 1 || octet < 0 || octet > 255) {
             return false;
         }
         segments++;
-        token = strtok(NULL, ".");
+        ipToken = strtok(NULL, ".");
     }
 
     // L'adresse IP doit avoir 4 segments
@@ -67,18 +69,15 @@ boolean estAdresseIPValide(char* adresseIP) {
     return true;
 }
 
-/*
+
 int main(void) {
     char adresseIP[LONGUEUR_MAX];
     printf("Entrez une adresse IP: ");
     scanf("%s", adresseIP);
-
     if (estAdresseIPValide(adresseIP)) {
         printf("L'adresse IP est valide.\n");
     } else {
         printf("L'adresse IP n'est pas valide.\n");
     }
-
     return 0;
 }
-*/
