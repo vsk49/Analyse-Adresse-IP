@@ -27,4 +27,9 @@
 #include "constantes.h"
 #include "structs.h"
 
+int getMasqueSousReseau(char* adresseIP);
+char getAdresseClasse(char* adresseIP);
+char* getAdresseType(char* adresseIP);
+int* getAdresseReseau(char* adresseIP);
+int* getAdresseMachineHote(char* adresseIP);
 AdressesAAfficher extraireChampsIP(char* adresseIP);
