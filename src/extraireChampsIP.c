@@ -31,11 +31,11 @@
 int getMasqueSousReseau(char* adresseIP) {
     char* slash = strchr(adresseIP, '/');
     if (!slash) {
-        return false;
+        return -1;
     }
     int masqueValue;
     if (sscanf(slash + 1, "%d", &masqueValue) != 1) {
-        return false;
+        return -1;
     }
     return masqueValue;
 }
@@ -94,37 +94,60 @@ char* getAdresseType(char* adresseIP) {
 
 // Etape 4 : Extraction de l'adresse de reseau
 int* getAdresseReseau(char* adresseIP) {
-    int masque = getMasqueSousReseau(adresseIP);
-    int masqueOctets[4] = {0, 0, 0, 0};
-    for (int i = 0; i < masque / 8; i++) {
-        masqueOctets[i] = 255;
-    }
-    if (masque % 8 != 0) {
-        masqueOctets[masque / 8] = 255 << (8 - masque % 8);
+    char adresseCopy[LONGUEUR_MAX];
+    strcpy(adresseCopy, adresseIP);
+    char* slashPosition = strchr(adresseCopy, '/');
+    if (slashPosition) {
+        *slashPosition = '\0';  // Replace the slash with a null character
     }
 
-    char* adresseCopy = strdup(adresseIP);
-    char* adresseReseau = strtok(adresseCopy, "/");
     int* octetsReseau = malloc(4 * sizeof(int));
     int i = 0;
-    while (adresseReseau != NULL && i < 4) {
+    char* dotPosition = strchr(adresseCopy, '.');
+    while (dotPosition != NULL && i < 4) {
+        *dotPosition = '\0';  // Replace the dot with a null character
         int octet;
-        sscanf(adresseReseau, "%d", &octet);
-        octetsReseau[i] = octet & masqueOctets[i];
-        adresseReseau = strtok(NULL, ".");
+        sscanf(adresseCopy, "%d", &octet);
+        octetsReseau[i] = octet;
+        strcpy(adresseCopy, dotPosition + 1);  // Copy the rest of the string
+        dotPosition = strchr(adresseCopy, '.');
         i++;
     }
-    // Remplir les octets restants avec des zeros
+    if (i < 4) {
+        int octet;
+        sscanf(adresseCopy, "%d", &octet);
+        octetsReseau[i] = octet;
+        i++;
+    }
+    // Fill the remaining octets with zeros
     while (i < 4) {
         octetsReseau[i] = 0;
         i++;
     }
-    free(adresseCopy);
+
+    int masque = getMasqueSousReseau(adresseIP);
+    if (masque == -1) {
+        free(octetsReseau);
+        return NULL;
+    }
+
+    int masqueOctets[4] = {0, 0, 0, 0};
+    for (i = 0; i < masque / 8; i++) {
+        masqueOctets[i] = 255;
+    }
+    if (masque % 8 != 0) {
+        masqueOctets[masque / 8] = 255 - ((1 << (8 - masque % 8)) - 1);
+    }
+
+    for (i = 0; i < 4; i++) {
+        octetsReseau[i] = octetsReseau[i] & masqueOctets[i];
+    }
+
     return octetsReseau;
 }
 
+// Etape 5 : Extraction de l'adresse de l'hote
 int* getAdresseMachineHote(char* adresseIP) {
-    // Etape 5 : Extraction de l'adresse de l'hote
     int masque = getMasqueSousReseau(adresseIP);
     int masqueOctets[4] = {0, 0, 0, 0};
     for (int i = 0; i < masque / 8; i++) {
@@ -134,23 +157,41 @@ int* getAdresseMachineHote(char* adresseIP) {
         masqueOctets[masque / 8] = 255 << (8 - masque % 8);
     }
 
-    char* adresseCopy = strdup(adresseIP);
-    char* adresseHote = strtok(adresseCopy, "/");
+    char adresseCopy[30];
+    strcpy(adresseCopy, adresseIP);
+    char* slashPosition = strchr(adresseCopy, '/');
+    if (slashPosition) {
+        *slashPosition = '\0';  // Replace the slash with a null character
+    }
+
     int* octetsHote = malloc(4 * sizeof(int));
     int i = 0;
-    while (adresseHote != NULL && i < 4) {
+    char* dotPosition = strchr(adresseCopy, '.');
+    while (dotPosition != NULL && i < 4) {
+        *dotPosition = '\0';  // Replace the dot with a null character
         int octet;
-        sscanf(adresseHote, "%d", &octet);
-        octetsHote[i] = octet & ~masqueOctets[i];
-        adresseHote = strtok(NULL, ".");
+        sscanf(adresseCopy, "%d", &octet);
+        octetsHote[i] = octet;
+        strcpy(adresseCopy, dotPosition + 1);  // Copy the rest of the string
+        dotPosition = strchr(adresseCopy, '.');
         i++;
     }
-    // Remplir les octets restants avec des zeros
+    if (i < 4) {
+        int octet;
+        sscanf(adresseCopy, "%d", &octet);
+        octetsHote[i] = octet;
+        i++;
+    }
+    // Fill the remaining octets with zeros
     while (i < 4) {
         octetsHote[i] = 0;
         i++;
     }
-    free(adresseCopy);
+
+    for (i = 0; i < 4; i++) {
+        octetsHote[i] = octetsHote[i] & ~masqueOctets[i];
+    }
+
     return octetsHote;
 }
 
@@ -183,13 +224,12 @@ int main(void) {
     printf("Entrez une adresse IP : ");
     scanf("%s", adresseIP);
     AdressesAAfficher champs = extraireChampsIP(adresseIP);
-    printf("Adresse IP : %s\n", adresseIP);
     printf("Masque de sous-réseau : %d\n", champs.masqueSousReseau);
     printf("Classe: %c\n", champs.adresseClasse);
     printf("Type: %s\n", champs.adresseType);
     printf("Adresse réseau: %d.%d.%d.%d\n", champs.adresseReseau[0], champs.adresseReseau[1], 
         champs.adresseReseau[2], champs.adresseReseau[3]);
-    printf("Adresse machine hôte: %d.%d\n", champs.adresseMachineHote[0], 
-        champs.adresseMachineHote[1]);
+    printf("Adresse machine hôte: %d.%d.%d\n", champs.adresseMachineHote[0], 
+        champs.adresseMachineHote[1], champs.adresseMachineHote[2]);
     return 0;
 }
