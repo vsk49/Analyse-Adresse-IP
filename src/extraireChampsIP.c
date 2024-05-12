@@ -29,9 +29,10 @@
 
 // Etape 1 : Extraction de la masque de l'adresse IP
 int getMasqueSousReseau(char* adresseIP) {
-    char* adresse = strtok(adresseIP, "/");
-    char* masque = strtok(NULL, "/");
-    return sscanf(masque, "%d", &masque);
+    char* masque = strtok(adresseIP, "/");
+    int masqueValue;
+    int result = sscanf(masque, "%d", &masqueValue);
+    return result == 1 ? masqueValue : 0;
 }
 
 // Etape 2 : Extraction de la classe de l'adresse IP
@@ -40,7 +41,7 @@ char getAdresseClasse(char* adresseIP) {
     int premierOctet;
     int valeurPremierOctet = sscanf(premierOctetStr, "%d", &premierOctet);
     if (valeurPremierOctet != 1) {
-        printf("%d", false);
+        return 'X';
     } else {
         if (premierOctet >= 0 && premierOctet <= 127) {
             return 'A';
@@ -50,7 +51,7 @@ char getAdresseClasse(char* adresseIP) {
             return 'C';
         } else if (premierOctet >= 224 && premierOctet <= 239) {
             return 'D';
-        } else if (premierOctet >= 240 && premierOctet <= 255) {
+        } else {
             return 'E';
         } 
     }
@@ -121,11 +122,12 @@ int* getAdresseMachineHote(char* adresseIP) {
 }
 
 AdressesAAfficher extraireChampsIP(char* adresseIP) {
+    // Declaration de la structure
+    AdressesAAfficher information;
+
     if (!estAdresseIPValide(adresseIP)) {
         printf("%d", false);
     } else {
-        // Declaration de la structure
-        AdressesAAfficher information;
         // Extraction des champs
         information.masqueSousReseau = getMasqueSousReseau(adresseIP);
         information.adresseClasse = getAdresseClasse(adresseIP);
@@ -139,7 +141,6 @@ AdressesAAfficher extraireChampsIP(char* adresseIP) {
         int* tempHote = getAdresseMachineHote(adresseIP);
         // Copie des valeurs de l'adresse de l'hote
         memcpy(information.adresseMachineHote, tempHote, NB_BYTES * sizeof(int));
-
-        return information;
     }
+    return information;
 }
