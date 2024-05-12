@@ -29,10 +29,15 @@
 
 // Etape 1 : Extraction de la masque de l'adresse IP
 int getMasqueSousReseau(char* adresseIP) {
-    char* masque = strtok(adresseIP, "/");
+    char* slash = strchr(adresseIP, '/');
+    if (!slash) {
+        return false;
+    }
     int masqueValue;
-    int result = sscanf(masque, "%d", &masqueValue);
-    return result == 1 ? masqueValue : 0;
+    if (sscanf(slash + 1, "%d", &masqueValue) != 1) {
+        return false;
+    }
+    return masqueValue;
 }
 
 // Etape 2 : Extraction de la classe de l'adresse IP
@@ -59,16 +64,27 @@ char getAdresseClasse(char* adresseIP) {
 
 // Etape 3 : Extraction du type d'adresse
 char* getAdresseType(char* adresseIP) {
-    char* premierOctet = strtok(adresseIP, ".");
-    int octet = sscanf(premierOctet, "%d", &octet);
+    char adresseCopy[LONGUEUR_MAX]; 
+    strcpy(adresseCopy, adresseIP);
+
+    char* premierOctetStr = strtok(adresseCopy, ".");
+    int premierOctet;
+    sscanf(premierOctetStr, "%d", &premierOctet);
+
+    char* deuxiemeOctetStr = strtok(NULL, ".");
+    int deuxiemeOctet = 0;
+    if (deuxiemeOctetStr) {
+        sscanf(deuxiemeOctetStr, "%d", &deuxiemeOctet);
+    }
+
     char* typeAdresse = malloc(10 * sizeof(char));
-    if (octet == 10 || (octet == 172 && (octet >= 16 && octet <= 31)) || (octet == 192 && octet == 168)) {
+    if (premierOctet == 10 || (premierOctet == 172 && (deuxiemeOctet >= 16 && deuxiemeOctet <= 31)) || (premierOctet == 192 && deuxiemeOctet == 168)) {
         strcpy(typeAdresse, "Private");
-    } else if (octet == 255) {
+    } else if (premierOctet == 255) {
         strcpy(typeAdresse, "Broadcast");
-    } else if (octet == 0) {
+    } else if (premierOctet == 0) {
         strcpy(typeAdresse, "Network");
-    } else if (octet >= 1 && octet <= 223) {
+    } else if (premierOctet >= 1 && premierOctet <= 223) {
         strcpy(typeAdresse, "Unicast");
     } else {
         strcpy(typeAdresse, "Public");
@@ -78,12 +94,23 @@ char* getAdresseType(char* adresseIP) {
 
 // Etape 4 : Extraction de l'adresse de reseau
 int* getAdresseReseau(char* adresseIP) {
-    char* adresseReseau = strtok(adresseIP, ".");
+    int masque = getMasqueSousReseau(adresseIP);
+    int masqueOctets[4] = {0, 0, 0, 0};
+    for (int i = 0; i < masque / 8; i++) {
+        masqueOctets[i] = 255;
+    }
+    if (masque % 8 != 0) {
+        masqueOctets[masque / 8] = 255 << (8 - masque % 8);
+    }
+
+    char* adresseCopy = strdup(adresseIP);
+    char* adresseReseau = strtok(adresseCopy, "/");
     int* octetsReseau = malloc(4 * sizeof(int));
     int i = 0;
-    while (adresseReseau != NULL && i < getMasqueSousReseau(adresseIP) / 4) {
-        int octet = sscanf(adresseReseau, "%d", &octet);
-        octetsReseau[i] = octet;
+    while (adresseReseau != NULL && i < 4) {
+        int octet;
+        sscanf(adresseReseau, "%d", &octet);
+        octetsReseau[i] = octet & masqueOctets[i];
         adresseReseau = strtok(NULL, ".");
         i++;
     }
@@ -92,33 +119,39 @@ int* getAdresseReseau(char* adresseIP) {
         octetsReseau[i] = 0;
         i++;
     }
+    free(adresseCopy);
     return octetsReseau;
 }
 
 int* getAdresseMachineHote(char* adresseIP) {
     // Etape 5 : Extraction de l'adresse de l'hote
-        char* premierOctetStr = strtok(adresseIP, ".");
-        int* octetsMachineHote = malloc(4 * sizeof(int));
-        int i = 0;
-        int j = 0;
-        while (premierOctetStr != NULL) {
-            int octet;
-            sscanf(premierOctetStr, "%d", &octet);
-            // Si l'octet est superieur ou egal au nombre d'octets necessaires 
-            // pour l'adresse de reseau
-            if (i >= getMasqueSousReseau(adresseIP) / 4) {
-                octetsMachineHote[j] = octet;
-                j++;
-            }
-            premierOctetStr = strtok(NULL, ".");
-            i++;
-        }
-        // Remplir les octets restants avec des zeros
-        while (j < 4) {
-            octetsMachineHote[j] = 0;
-            j++;
-        }
-        return octetsMachineHote;
+    int masque = getMasqueSousReseau(adresseIP);
+    int masqueOctets[4] = {0, 0, 0, 0};
+    for (int i = 0; i < masque / 8; i++) {
+        masqueOctets[i] = 255;
+    }
+    if (masque % 8 != 0) {
+        masqueOctets[masque / 8] = 255 << (8 - masque % 8);
+    }
+
+    char* adresseCopy = strdup(adresseIP);
+    char* adresseHote = strtok(adresseCopy, "/");
+    int* octetsHote = malloc(4 * sizeof(int));
+    int i = 0;
+    while (adresseHote != NULL && i < 4) {
+        int octet;
+        sscanf(adresseHote, "%d", &octet);
+        octetsHote[i] = octet & ~masqueOctets[i];
+        adresseHote = strtok(NULL, ".");
+        i++;
+    }
+    // Remplir les octets restants avec des zeros
+    while (i < 4) {
+        octetsHote[i] = 0;
+        i++;
+    }
+    free(adresseCopy);
+    return octetsHote;
 }
 
 AdressesAAfficher extraireChampsIP(char* adresseIP) {
@@ -143,4 +176,20 @@ AdressesAAfficher extraireChampsIP(char* adresseIP) {
         memcpy(information.adresseMachineHote, tempHote, NB_BYTES * sizeof(int));
     }
     return information;
+}
+
+int main(void) {
+    char adresseIP[LONGUEUR_MAX];
+    printf("Entrez une adresse IP : ");
+    scanf("%s", adresseIP);
+    AdressesAAfficher champs = extraireChampsIP(adresseIP);
+    printf("Adresse IP : %s\n", adresseIP);
+    printf("Masque de sous-réseau : %d\n", champs.masqueSousReseau);
+    printf("Classe: %c\n", champs.adresseClasse);
+    printf("Type: %s\n", champs.adresseType);
+    printf("Adresse réseau: %d.%d.%d.%d\n", champs.adresseReseau[0], champs.adresseReseau[1], 
+        champs.adresseReseau[2], champs.adresseReseau[3]);
+    printf("Adresse machine hôte: %d.%d\n", champs.adresseMachineHote[0], 
+        champs.adresseMachineHote[1]);
+    return 0;
 }

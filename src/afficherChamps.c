@@ -43,3 +43,11 @@ void afficherChampsIP(char* adresseIP) {
             champs.adresseMachineHote[1]);
     }
 }
+
+int main(void) {
+    char adresseIP[LONGUEUR_MAX];
+    printf("Entrez une adresse IP : ");
+    scanf("%s", adresseIP);
+    afficherChampsIP(adresseIP);
+    return 0;
+}

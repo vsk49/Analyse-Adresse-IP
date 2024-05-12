@@ -69,7 +69,7 @@ boolean estAdresseIPValide(char* adresseIP) {
     return true;
 }
 
-
+/*
 int main(void) {
     char adresseIP[LONGUEUR_MAX];
     printf("Entrez une adresse IP: ");
@@ -81,3 +81,4 @@ int main(void) {
     }
     return 0;
 }
+*/
