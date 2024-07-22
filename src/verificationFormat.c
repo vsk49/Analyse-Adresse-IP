@@ -23,14 +23,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "./../obj/verificationFormat.h"
 #include "./../obj/constantes.h"
 #include "./../obj/structs.h"
 
-boolean estAdresseIPValide(char* adresseIP) {
+bool estAdresseIPValide(char* adresseIP) {
     // Pour eviter la possibilite de modifier l'adresse originale
     char adresseCopy[LONGUEUR_MAX]; 
-    strcpy(adresseCopy, adresseIP);
+    strncpy(adresseCopy, adresseIP, LONGUEUR_MAX - 1);
+    adresseCopy[LONGUEUR_MAX - 1] = '\0';
 
     // Separer l'adresse IP et le masque de sous-reseau
     char *adresseIPToken = strtok(adresseCopy, "/");
@@ -69,7 +71,6 @@ boolean estAdresseIPValide(char* adresseIP) {
     return true;
 }
 
-/*
 int main(void) {
     char adresseIP[LONGUEUR_MAX];
     printf("Entrez une adresse IP: ");
@@ -81,4 +82,3 @@ int main(void) {
     }
     return 0;
 }
-*/

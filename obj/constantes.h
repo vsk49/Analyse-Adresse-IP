@@ -27,6 +27,4 @@
     #define NB_BYTES 4
     #define NB_BITS 8
 
-    typedef enum {false, true} boolean;
-
 #endif
