@@ -3,5 +3,6 @@
         "microbit": "",
         "verificationformat.h": "c",
         "structs.h": "c"
-    }
+    },
+    "makefile.configureOnOpen": true
 }
